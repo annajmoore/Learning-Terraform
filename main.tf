@@ -6,7 +6,7 @@ data "aws_ami" "ubuntu" {
   most_recent = true
 
   filter {
-    name = "name"
+    name   = "name"
     values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"]
   }
 
@@ -25,6 +25,15 @@ resource "aws_instance" "app_server" {
   }
 }
 
+# Create a virtual network
+resource "azurerm_virtual_network" "vnet" {
+  name                = "myTFVnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = "westus2"
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.19.0"
@@ -36,6 +45,6 @@ module "vpc" {
   private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
   public_subnets  = ["10.0.101.0/24"]
 
-  enable_dns_hostnames    = true
+  enable_dns_hostnames = true
 }
 
